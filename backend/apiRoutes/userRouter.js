@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const product = require("../dataInit/product");
 const cart = require("../dataInit/cart");
+const orderData = require("../dataInit/orderData");
 const fs = require("fs");
 const discounts = require("../dataInit/discountCode");
 const orderGenerator = require("../utility/orderGenerator");
@@ -13,8 +14,8 @@ router.post("/cart", (req, res, next) => {
   const { itemId, quantity } = body;
   const productItem = _.find(product, (obj) => obj.itemId == itemId);
   //update in cart
-  if (!_.isEmpty(_.find(cart.cartItems, (obj) => obj.itemId == itemId))) {
-    let item = _.find(cart.cartItems, (obj) => obj.itemId == itemId);
+  if (!_.isEmpty(_.find(cart, (obj) => obj.itemId == itemId))) {
+    let item = _.find(cart, (obj) => obj.itemId == itemId);
     if (_.isNull(_.get(item, "quantity"))) {
       item.quantity = parseInt(quantity);
     } else {
@@ -28,7 +29,7 @@ router.post("/cart", (req, res, next) => {
   }
   console.log({ itemId, quantity });
   //add into the cart
-  cart.cartItems.push({
+  cart.push({
     itemId,
     quantity,
     totalPrice: quantity * productItem.price,
@@ -55,10 +56,17 @@ router.post("/checkout", (res, req) => {
     discounts,
     (discount) => discount.code == discountCode
   );
+  const curOrder = orderGenerator(cart);
   if (!curDiscount.isValid) {
     res.status(406).send("invalid discount code");
     return;
   }
-  const curOrder = orderGenerator(cart.cartItems);
+  if (curDiscount.isValid) {
+    curOrder.isDiscounted = true;
+    curOrder.priceAfterDiscount = 0.9 * curOrder.totalCartPrice;
+    orderData.push(curOrder);
+    fs.writeFileSync("orderData.json", JSON.stringify(orderData, null, 2));
+    res.send({ orderData });
+  }
 });
 module.exports = router;
