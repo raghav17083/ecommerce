@@ -13,10 +13,11 @@ const fs = require("fs");
 
 const app = express();
 app.use(cors());
-
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: true }));
+app.use("/user", userRouter);
+app.use("/admin", adminRouter);
+
 app.get("/", (req, res) => {
   console.log(product);
   res.send({ body: "Lets get this unibox assignment" });
@@ -27,5 +28,13 @@ app.listen(PORT, () => {
   console.log("listening on 8080");
 });
 
-app.use("/user", userRouter);
-app.use("/admin", adminRouter);
+//start with fresh files on server restart
+fs.truncate("discountData.json", 0, () => {
+  console.log("clearing discount data file");
+});
+fs.truncate("orderData.json", 0, () => {
+  console.log("clearing order data file");
+});
+fs.truncate("cartData.json", 0, () => {
+  console.log("clearing cart data file");
+});

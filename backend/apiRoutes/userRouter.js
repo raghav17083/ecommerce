@@ -7,27 +7,33 @@ const discounts = require("../dataInit/discountCode");
 const orderGenerator = require("../utility/orderGenerator");
 const express = require("express");
 const router = express.Router();
+router.use(express.json());
 
 router.post("/cart", (req, res, next) => {
-  console.log({ req });
+  //1. {itemid, quantity, price}
+  //2. fetch cart from db
+  //3. if cart has itemid increase the quantity of the item
+  //4. if item is not there, add item in the cart table and return the cart.
+  //5. res.send(cart)
   const body = req.body;
   const { itemId, quantity } = body;
   const productItem = _.find(product, (obj) => obj.itemId == itemId);
   //update in cart
+  console.log({ cart });
   if (!_.isEmpty(_.find(cart, (obj) => obj.itemId == itemId))) {
-    let item = _.find(cart, (obj) => obj.itemId == itemId);
+    let item = _.find(cart, (obj) => {
+      return obj.itemId == itemId;
+    });
     if (_.isNull(_.get(item, "quantity"))) {
       item.quantity = parseInt(quantity);
     } else {
       item.quantity = parseInt(item.quantity) + parseInt(quantity);
     }
     item.totalPrice = item.quantity * productItem.price;
-    console.log({ cart });
     fs.writeFileSync("cartData.json", JSON.stringify(cart, null, 2));
     res.send({ method: "update", cart });
     return;
   }
-  console.log({ itemId, quantity });
   //add into the cart
   cart.push({
     itemId,
@@ -37,14 +43,9 @@ router.post("/cart", (req, res, next) => {
   fs.writeFileSync("cartData.json", JSON.stringify(cart, null, 2));
   res.send({ method: "add", cart });
   return;
-  //1. {itemid, quantity, price}
-  //2. fetch cart from db
-  //3. if cart has itemid increase the quantity of the item
-  //4. if item is not there, add item in the cart table and return the cart.
-  //5. res.send(cart)
 });
 
-router.post("/checkout", (res, req) => {
+router.post("/checkout", (req, res) => {
   /**
    * 1. table structure for Orders -> OrderId, itemsInCart, totalPrice, orderNumber, dateOfPurchase
    * assuming we give discount on every 5th order, so, if the orderId with latestDate has sequenceOrder 4 we
@@ -52,21 +53,34 @@ router.post("/checkout", (res, req) => {
    * {orderId, purchaseDate, }
    */
   const { discountCode } = req.body;
-  const curDiscount = _.find(
-    discounts,
-    (discount) => discount.code == discountCode
-  );
+  console.log({ discountCode });
+  let discountApplied = false;
+  const curDiscount =
+    discountCode === ""
+      ? null
+      : _.find(discounts, (discount) => discount.code == discountCode);
+  console.log({ curDiscount });
   const curOrder = orderGenerator(cart);
-  if (!curDiscount.isValid) {
-    res.status(406).send("invalid discount code");
+  if (
+    !_.isNull(curDiscount) &&
+    (_.isEmpty(curDiscount) || !curDiscount.isValid)
+  ) {
+    res.status(406).send("incorrect or invalid code applied");
     return;
   }
-  if (curDiscount.isValid) {
+  if (!_.isNull(curDiscount) && curDiscount.isValid) {
     curOrder.isDiscounted = true;
+    discountApplied = true;
+    curDiscount.isValid = false;
+    fs.writeFileSync("discountData.json", JSON.stringify(discounts, null, 2));
     curOrder.priceAfterDiscount = 0.9 * curOrder.totalCartPrice;
-    orderData.push(curOrder);
-    fs.writeFileSync("orderData.json", JSON.stringify(orderData, null, 2));
-    res.send({ orderData });
   }
+  orderData.push(curOrder);
+  _.remove(cart, () => true);
+  console.log(cart);
+  fs.writeFileSync("orderData.json", JSON.stringify(orderData, null, 2));
+  //clear the cart
+
+  res.send({ discountApplied, orderData });
 });
 module.exports = router;

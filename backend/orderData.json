@@ -1,0 +1,18 @@
+[
+  {
+    "orderId": "orderNo1",
+    "itemsInCart": [],
+    "isDiscounted": true,
+    "totalCartPrice": 70,
+    "purchaseDate": "2023-02-07T12:49:14.539Z",
+    "priceAfterDiscount": 63
+  },
+  {
+    "orderId": "orderNo2",
+    "itemsInCart": [],
+    "isDiscounted": true,
+    "totalCartPrice": 150,
+    "purchaseDate": "2023-02-07T12:50:13.430Z",
+    "priceAfterDiscount": 135
+  }
+]
