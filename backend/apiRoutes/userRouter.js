@@ -10,11 +10,13 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/cart", (req, res, next) => {
+  /**
   //1. {itemid, quantity, price}
   //2. fetch cart from db
   //3. if cart has itemid increase the quantity of the item
   //4. if item is not there, add item in the cart table and return the cart.
   //5. res.send(cart)
+   **/
   const body = req.body;
   const { itemId, quantity } = body;
   const productItem = _.find(product, (obj) => obj.itemId == itemId);
@@ -82,6 +84,6 @@ router.post("/checkout", (req, res) => {
   fs.writeFileSync("orderData.json", JSON.stringify(orderData, null, 2));
   //clear the cart
 
-  res.send({ data: { discountApplied, orderData } });
+  res.send({ data: { order: curOrder } });
 });
 module.exports = router;

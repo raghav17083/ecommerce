@@ -32,9 +32,9 @@ router.get("/statistics", (req, res) => {
     };
     return orderStat;
   });
-  let discountsApplied = _.filter(
-    discounts,
-    (discount) => discount.isValid == true
+  let discountsApplied = _.map(
+    _.reject(discounts, (discount) => discount.isValid == true),
+    (discount) => discount.code
   );
   res.status(200).send({ data: { orderStats, discountsApplied } });
   //check last order since, we can only get the information for the last purchased items
