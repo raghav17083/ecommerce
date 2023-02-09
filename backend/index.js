@@ -20,7 +20,11 @@ app.use("/admin", adminRouter);
 
 app.get("/", (req, res) => {
   console.log(product);
-  res.send({ body: "Lets get this unibox assignment" });
+  return res.send({ data: "called home api on server" });
+});
+
+app.get("/products", (req, res) => {
+  return res.send({ data: product });
 });
 
 const PORT = process.env.PORT || 8080;

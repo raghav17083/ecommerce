@@ -2,23 +2,18 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Button, Space } from "antd";
 import "antd/dist/reset.css";
+import User from "./components/user";
+import Admin from "./components/admin";
+import { Routes, Route } from "react-router-dom";
+import Home from "./components/home";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        {/*<img src={logo} className="App-logo" alt="logo" />*/}
-        <p></p>
-        <Space wrap>
-          <div>
-            <Button type="primary">USER</Button>
-          </div>
-          <div>
-            <Button type="primary">ADMIN</Button>
-          </div>
-        </Space>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />}></Route>
+      <Route path="/user" element={<User />}></Route>
+      <Route path="/admin" element={<Admin />}></Route>
+    </Routes>
   );
 }
 

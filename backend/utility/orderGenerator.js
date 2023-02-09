@@ -3,14 +3,14 @@ const orderData = require("../dataInit/orderData");
 
 module.exports = (cartItems) => {
   const orderId = `orderNo${orderData.length + 1}`;
-  const itemsInCart = cartItems;
+  const orderItems = _.map(cartItems, (item) => item.itemId);
   const isDiscounted = false;
   const totalCartPrice = _.sumBy(cartItems, (item) => item.totalPrice);
   const priceAfterDiscount = totalCartPrice;
   const purchaseDate = new Date();
   return {
     orderId,
-    itemsInCart,
+    orderItems,
     isDiscounted,
     totalCartPrice,
     purchaseDate,

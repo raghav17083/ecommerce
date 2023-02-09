@@ -31,7 +31,7 @@ router.post("/cart", (req, res, next) => {
     }
     item.totalPrice = item.quantity * productItem.price;
     fs.writeFileSync("cartData.json", JSON.stringify(cart, null, 2));
-    res.send({ method: "update", cart });
+    res.send({ data: { method: "update", cart } });
     return;
   }
   //add into the cart
@@ -41,7 +41,7 @@ router.post("/cart", (req, res, next) => {
     totalPrice: quantity * productItem.price,
   });
   fs.writeFileSync("cartData.json", JSON.stringify(cart, null, 2));
-  res.send({ method: "add", cart });
+  res.send({ data: { method: "add", cart } });
   return;
 });
 
@@ -70,17 +70,18 @@ router.post("/checkout", (req, res) => {
   }
   if (!_.isNull(curDiscount) && curDiscount.isValid) {
     curOrder.isDiscounted = true;
+    curOrder.discountCode = curDiscount.code;
     discountApplied = true;
     curDiscount.isValid = false;
     fs.writeFileSync("discountData.json", JSON.stringify(discounts, null, 2));
     curOrder.priceAfterDiscount = 0.9 * curOrder.totalCartPrice;
   }
   orderData.push(curOrder);
-  _.remove(cart, () => true);
+  _.remove(cart, () => true); //empty the cart for the user once order is placed, so that new cart can be used
   console.log(cart);
   fs.writeFileSync("orderData.json", JSON.stringify(orderData, null, 2));
   //clear the cart
 
-  res.send({ discountApplied, orderData });
+  res.send({ data: { discountApplied, orderData } });
 });
 module.exports = router;

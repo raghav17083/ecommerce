@@ -1,12 +1,7 @@
 [
   {
     "itemId": "item02",
-    "quantity": 3,
-    "totalPrice": 30
-  },
-  {
-    "itemId": "item03",
     "quantity": 4,
-    "totalPrice": 120
+    "totalPrice": 40
   }
 ]

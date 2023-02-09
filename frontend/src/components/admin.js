@@ -1,4 +1,4 @@
-const Admin = (props) => {
-  return <></>;
+const Admin = () => {
+  return <div>This is admin</div>;
 };
 export default Admin;
