@@ -3,6 +3,7 @@ import axios from "axios";
 import { Button } from "antd";
 import { InputNumber } from "antd";
 import { useState } from "react";
+import styles from './example.less';
 
 const Item = ({ item }) => {
   const { itemId, price } = item;
@@ -22,8 +23,8 @@ const Item = ({ item }) => {
   };
   return (
     <div>
-      <List.Item.Meta title={`item name: ${item.name}`} />
-      price: {item.price}
+      <div className=>Item name: {item.name}</div>
+      <div>price: {item.price}</div>
       <div>
         <InputNumber min={1} max={10} defaultValue={1} onChange={onChange} />
       </div>
