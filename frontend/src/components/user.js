@@ -2,6 +2,7 @@ import axios from "axios";
 import { useFetch } from "react-async";
 import { useEffect, useState } from "react";
 import { Button, List } from "antd";
+import Item from "./item";
 import _ from "lodash";
 const User = () => {
   // 1. Fetch all the products
@@ -21,9 +22,7 @@ const User = () => {
   const listProducts = () => {
     showList(!list);
   };
-  const addToCart = ({itemId, quantity})=>{
-
-  }
+  const addToCart = ({ itemId, quantity }) => {};
   const displayProduct = list && "Display products";
   return (
     <div>
@@ -35,9 +34,8 @@ const User = () => {
               dataSource={product}
               renderItem={(item) => (
                 <List.Item key={item.itemId}>
-                  <List.Item.Meta title={`item name: ${item.name}`} />
-                  price: {item.price}
-                  <Button onClick={}></Button>
+                  <Item item={item} />
+                  {/*<Button onClick={}></Button>*/}
                 </List.Item>
               )}
             ></List>
